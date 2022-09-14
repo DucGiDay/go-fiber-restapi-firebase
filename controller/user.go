@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/hiiamtrong/go-fiber-restapi/model"
+	"github.com/DucGiDay/go-fiber-restapi-firebase/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

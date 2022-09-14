@@ -6,8 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/hiiamtrong/go-fiber-restapi/config"
-	"github.com/hiiamtrong/go-fiber-restapi/route"
+	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
+	"github.com/DucGiDay/go-fiber-restapi-firebase/route"
 )
 
 func main() {

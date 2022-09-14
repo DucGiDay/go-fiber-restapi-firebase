@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/hiiamtrong/go-fiber-restapi/config"
+	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

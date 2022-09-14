@@ -2,7 +2,7 @@ package route
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/hiiamtrong/go-fiber-restapi/controller"
+	"github.com/DucGiDay/go-fiber-restapi-firebase/controller"
 )
 
 func UserRoute(route fiber.Router) {

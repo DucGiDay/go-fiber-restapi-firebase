@@ -1,4 +1,4 @@
-module github.com/hiiamtrong/go-fiber-restapi
+module github.com/DucGiDay/go-fiber-restapi-firebase
 
 go 1.17
 
