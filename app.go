@@ -19,6 +19,7 @@ func main() {
 	config.ConnectDatabase()
 
 	setupRoutes(app)
+	defer config.FI.Client.Close()
 	app.Listen(":" + os.Getenv("PORT"))
 }
 

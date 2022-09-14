@@ -4,57 +4,39 @@ import (
 	"context"
 	"log"
 	"time"
-	"fmt"
-	"encoding/json"
 
 	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"google.golang.org/api/iterator"
 )
 
 type User struct {
-	// ID       primitive.ObjectID `json:"id" bson:"_id"`
-	ID			 int								`json:"id"`
-	Username string             `json:"username"`
-	Email    string             `json:"email"`
-	Age      int                `json:"age"`
+	ID       primitive.ObjectID `json:"id" bson:"_id"`
+	Username string             `json:"username" bson:"username"`
+	Email    string             `json:"email" bson:"email"`
+	Age      int                `json:"age" bson:"age"`
 }
 
 func GetAllUsers() ([]User, error) {
-	var FI config.FirebaseInstance = config.FI
+	var MI config.MongoInstance = config.MI
+	var users []User
+
+	collection := MI.DB.Collection("users")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	var users []User
-	
-	iter:= FI.Client.Collection("users").Documents(ctx)
-	for {
-		doc, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			fmt.Println(err)
-			break
-		}
-
-		data := doc.Data()
-		log.Println(data)
-
-		//convert map[string]interface{} to json string
-		jsonStrData, err := json.Marshal(data)
-    if err != nil {
-			fmt.Println(err)
-    }
-
-		// Convert json string to struct
-		var user User
-    if err := json.Unmarshal(jsonStrData, &user); err != nil {
-			fmt.Println(err)
-    }
-		users = append(users, user)
+	cursor, err := collection.Find(ctx, bson.D{{}})
+	if err != nil {
+		log.Fatal(err)
 	}
-	fmt.Println("users: ", users)
+	defer cursor.Close(ctx)
+
+	if err = cursor.All(ctx, &users); err != nil {
+		log.Fatal(err)
+	}
+
+	for _, user := range users {
+		log.Println(user)
+	}
 
 	return users, nil
 }

@@ -49,9 +49,7 @@ func CreateUser(c *fiber.Ctx) error {
 		}
 	}
 
-	users, _ := model.GetAllUsers()
-	// user.ID = primitive.NewObjectID()
-	user.ID = len(users)
+	user.ID = primitive.NewObjectID()
 	user, err := model.CreateUser(user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
