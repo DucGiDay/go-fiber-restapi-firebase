@@ -117,4 +117,5 @@ func DeleteUser(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
+	return c.JSON(user)
 }
