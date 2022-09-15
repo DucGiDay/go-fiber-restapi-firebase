@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+	// "os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -20,7 +20,8 @@ func main() {
 
 	setupRoutes(app)
 	defer config.FI.Client.Close()
-	app.Listen(":" + os.Getenv("PORT"))
+	// app.Listen(":" + os.Getenv("PORT"))
+	app.Listen(":4000")
 }
 
 func setupRoutes(app *fiber.App) {

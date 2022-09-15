@@ -1,9 +1,12 @@
 package controller
 
 import (
+	// "fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/DucGiDay/go-fiber-restapi-firebase/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/google/uuid"
 )
 
 func GetAllUsers(c *fiber.Ctx) error {
@@ -25,7 +28,7 @@ func GetUser(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
-	user, err := model.GetUser(userId)
+	user, _ := model.GetUser(userId.String())
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -49,9 +52,9 @@ func CreateUser(c *fiber.Ctx) error {
 		}
 	}
 
-	users, _ := model.GetAllUsers()
 	// user.ID = primitive.NewObjectID()
-	user.ID = len(users)
+	user.ID = uuid.New()
+	user.UserID = user.ID.String()
 	user, err := model.CreateUser(user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -78,7 +81,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, err = model.UpdateUser(userId, user)
+	user, err = model.UpdateUser(userId.String(), user)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -89,4 +92,29 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(user)
+}
+
+func DeleteUser(c *fiber.Ctx) error {
+	var user model.User
+	userId, err := primitive.ObjectIDFromHex(c.Params("userId"))
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": fiber.ErrNotFound.Message,
+			"error":   err,
+		})
+	}
+	if err := c.BodyParser(&user); err != nil {
+		return err
+	}
+
+	err = model.DeleteUser(userId.String())
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": fiber.ErrInternalServerError.Message,
+			"error":   err,
+		})
+	}
 }
