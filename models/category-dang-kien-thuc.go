@@ -15,7 +15,7 @@ import (
 
 type DangKienThuc struct {
 	Name   string							`json:"name"`
-	Slug	 string 						`json:"slug`
+	Slug	 string 						`json:"slug"`
 }
 
 func List() ([]DangKienThuc, error) {
