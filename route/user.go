@@ -2,13 +2,13 @@ package route
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/DucGiDay/go-fiber-restapi-firebase/controller"
+	"github.com/DucGiDay/go-fiber-restapi-firebase/controllers"
 )
 
 func UserRoute(route fiber.Router) {
-	route.Get("/", controller.GetAllUsers)
-	route.Post("/", controller.CreateUser)
-	route.Get("/:userId", controller.GetUser)
-	route.Put("/:userId", controller.UpdateUser)
-	route.Delete("/:userId", controller.DeleteUser)
+	route.Get("/", controllers.GetAllUsers)
+	route.Post("/", controllers.CreateUser)
+	route.Get("/:userId", controllers.GetUser)
+	route.Put("/:userId", controllers.UpdateUser)
+	route.Delete("/:userId", controllers.DeleteUser)
 }
