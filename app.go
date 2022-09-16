@@ -34,4 +34,5 @@ func setupRoutes(app *fiber.App) {
 	route.UserRoute(api.Group("/users"))
 	route.DangKienThucRoute(api.Group("/dkt"))
 	route.DonViKienThucRoute(api.Group("/dvkt"))
+	route.MoTaChiTietRoute(api.Group("/chi-tiet"))
 }
