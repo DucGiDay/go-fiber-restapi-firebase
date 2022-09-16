@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	// "github.com/tillberg/autorestart"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 
 	setupRoutes(app)
 	defer config.FI.Client.Close()
-	// app.Listen(":" + os.Getenv("PORT"))
+	// autorestart.RestartOnChange()
 	app.Listen(":4000")
 }
 
