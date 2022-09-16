@@ -3,11 +3,11 @@ package main
 import (
 	// "os"
 
+	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
+	"github.com/DucGiDay/go-fiber-restapi-firebase/route"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
-	"github.com/DucGiDay/go-fiber-restapi-firebase/route"
 )
 
 func main() {
@@ -33,4 +33,5 @@ func setupRoutes(app *fiber.App) {
 
 	route.UserRoute(api.Group("/users"))
 	route.DangKienThucRoute(api.Group("/dkt"))
+	route.DonViKienThucRoute(api.Group("/dvkt"))
 }
