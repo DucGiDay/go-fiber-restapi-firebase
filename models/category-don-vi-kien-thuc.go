@@ -20,11 +20,12 @@ type DonViKienThuc struct {
 	Id_category_dkt string `json:"id_category_dkt"`
 }
 
-func ListDonViKienThucs() ([]DonViKienThuc, error) {
+func ListDonViKienThucs() ([]DonViKienThuc, []string, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var donViKienThucs []DonViKienThuc
+	var IDs []string
 
 	iter := FI.Client.Collection("Category_Don_vi_kien_thuc").Documents(ctx)
 	for {
@@ -53,9 +54,10 @@ func ListDonViKienThucs() ([]DonViKienThuc, error) {
 		// 	fmt.Println(err)
 		// }
 		donViKienThucs = append(donViKienThucs, donViKienThuc)
+		IDs = append(IDs, doc.Ref.ID)
 	}
 
-	return donViKienThucs, nil
+	return donViKienThucs, IDs, nil
 }
 
 func ReadDonViKienThuc(id string) (DonViKienThuc, error) {

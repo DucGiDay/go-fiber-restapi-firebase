@@ -1,21 +1,28 @@
 package controllers
 
 import (
-	// "fmt"
-	// "log"
+	"encoding/json"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/DucGiDay/go-fiber-restapi-firebase/models"
+	"github.com/gofiber/fiber/v2"
 	// "go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func List(c *fiber.Ctx) error {
-	dangKienThucs, err := models.List()
+	dangKienThucs, IDs, err := models.List()
 	if err != nil {
 		return err
 	}
+	// respronseDatas := []map[string]interface{}{}
+	responseDatas := []string{}
+	for i, dangKienThuc := range dangKienThucs {
+		dangKienThucByte, _ := json.Marshal(dangKienThuc)
+		dangKienThucString := string(dangKienThucByte)
+		responseDataString := dangKienThucString + " - id: " + IDs[i]
+		responseDatas = append(responseDatas, responseDataString)
+	}
 
-	return c.JSON(dangKienThucs)
+	return c.JSON(responseDatas)
 }
 
 func Read(c *fiber.Ctx) error {

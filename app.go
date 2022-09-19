@@ -36,4 +36,5 @@ func setupRoutes(app *fiber.App) {
 	route.DangKienThucRoute(api.Group("/dkt"))
 	route.DonViKienThucRoute(api.Group("/dvkt"))
 	route.MoTaChiTietRoute(api.Group("/chi-tiet"))
+	route.DanhMucRoute(api.Group("/danh-muc")) //API này đang lỗi
 }
