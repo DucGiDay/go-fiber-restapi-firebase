@@ -1,30 +1,33 @@
 package models
 
 import (
-	"github.com/DucGiDay/go-fiber-restapi-firebase/helper"
 	"context"
+	"fmt"
 	"log"
 	"time"
-	"fmt"
+
+	"github.com/DucGiDay/go-fiber-restapi-firebase/helper"
+
 	// "encoding/json"
 
+	"cloud.google.com/go/firestore"
 	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
 	"google.golang.org/api/iterator"
-	"cloud.google.com/go/firestore"
 )
 
 type DangKienThuc struct {
-	Name   string							`json:"name"`
-	Slug	 string 						`json:"slug"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
 }
 
-func List() ([]DangKienThuc, error) {
+func List() ([]DangKienThuc, []string, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var dangKienThucs []DangKienThuc
-	
-	iter:= FI.Client.Collection("Category_Dang_Kien_Thuc").Documents(ctx)
+	var IDs []string
+
+	iter := FI.Client.Collection("Category_Dang_Kien_Thuc").Documents(ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -41,19 +44,21 @@ func List() ([]DangKienThuc, error) {
 		// Phần convert này tạm thời ko dùng đến. Đã convert ở trên
 		// //convert map[string]interface{} to json string
 		// jsonStrData, err := json.Marshal(data)
-    // if err != nil {
+		// if err != nil {
 		// 	fmt.Println(err)
-    // }
+		// }
 
 		// // Convert json string to struct
 		// var user User
-    // if err := json.Unmarshal(jsonStrData, &user); err != nil {
+		// if err := json.Unmarshal(jsonStrData, &user); err != nil {
 		// 	fmt.Println(err)
-    // }
+		// }
+
 		dangKienThucs = append(dangKienThucs, dangKienThuc)
+		IDs = append(IDs, doc.Ref.ID)
 	}
 
-	return dangKienThucs, nil
+	return dangKienThucs, IDs, nil
 }
 
 func Read(id string) (DangKienThuc, error) {
@@ -76,7 +81,7 @@ func Create(dangKienThuc DangKienThuc) (DangKienThuc, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	iter, temp, err:= FI.Client.Collection("Category_Dang_Kien_Thuc").Add(ctx, dangKienThuc)
+	iter, temp, err := FI.Client.Collection("Category_Dang_Kien_Thuc").Add(ctx, dangKienThuc)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -98,7 +103,7 @@ func Update(id string, dangKienThuc DangKienThuc) (DangKienThuc, error) {
 	return dangKienThuc, nil
 }
 
-func Delete(id string) (error) {
+func Delete(id string) error {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

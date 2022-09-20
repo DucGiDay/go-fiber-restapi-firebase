@@ -4,18 +4,27 @@ import (
 
 	// "log"
 
+	"encoding/json"
+
 	"github.com/DucGiDay/go-fiber-restapi-firebase/models"
 	"github.com/gofiber/fiber/v2"
 	// "go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func ListDonViKienThucs(c *fiber.Ctx) error {
-	donViKienThucs, err := models.ListDonViKienThucs()
+	donViKienThucs, IDs, err := models.ListDonViKienThucs()
 	if err != nil {
 		return err
 	}
+	responseDatas := []string{}
+	for i, donViKienThuc := range donViKienThucs {
+		donViKienThucByte, _ := json.Marshal(donViKienThuc)
+		donViKienThucString := string(donViKienThucByte)
+		responseDataString := donViKienThucString + " - id: " + IDs[i]
+		responseDatas = append(responseDatas, responseDataString)
+	}
 
-	return c.JSON(donViKienThucs)
+	return c.JSON(responseDatas)
 }
 
 func ReadDonViKienThuc(c *fiber.Ctx) error {

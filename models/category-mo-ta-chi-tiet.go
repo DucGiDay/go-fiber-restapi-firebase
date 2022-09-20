@@ -21,11 +21,12 @@ type MoTaChiTiet struct {
 	IsCheck          bool   `json:"isCheck"`
 }
 
-func ListMoTaChiTiets() ([]MoTaChiTiet, error) {
+func ListMoTaChiTiets() ([]MoTaChiTiet, []string, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var moTaChiTiets []MoTaChiTiet
+	var IDs []string
 
 	iter := FI.Client.Collection("Category_mo_ta_chi_tiet").Documents(ctx)
 	for {
@@ -54,9 +55,10 @@ func ListMoTaChiTiets() ([]MoTaChiTiet, error) {
 		// 	fmt.Println(err)
 		// }
 		moTaChiTiets = append(moTaChiTiets, moTaChiTiet)
+		IDs = append(IDs, doc.Ref.ID)
 	}
 
-	return moTaChiTiets, nil
+	return moTaChiTiets, IDs, nil
 }
 
 func ReadMoTaChiTiet(id string) (MoTaChiTiet, error) {
