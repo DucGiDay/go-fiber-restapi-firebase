@@ -2,24 +2,25 @@ package models
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
-	"fmt"
+
 	// "encoding/json"
 
-	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
-	"google.golang.org/api/iterator"
-	"github.com/google/uuid"
 	"cloud.google.com/go/firestore"
+	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
+	"github.com/google/uuid"
+	"google.golang.org/api/iterator"
 )
 
 type User struct {
 	// ID       primitive.ObjectID `json:"id"`
-	ID			 uuid.UUID					`json:"id"`
-	UserID   string							`json:"userId"`
-	Username string             `json:"username"`
-	Email    string             `json:"email"`
-	Age      int                `json:"age"`
+	ID       uuid.UUID `json:"Id"`
+	UserID   string    `json:"UserId"`
+	Username string    `json:"Username"`
+	Email    string    `json:"Email"`
+	Age      int       `json:"Age"`
 }
 
 func GetAllUsers() ([]User, error) {
@@ -27,8 +28,8 @@ func GetAllUsers() ([]User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var users []User
-	
-	iter:= FI.Client.Collection("users").Documents(ctx)
+
+	iter := FI.Client.Collection("users").Documents(ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -45,15 +46,15 @@ func GetAllUsers() ([]User, error) {
 		// Phần convert này tạm thời ko dùng đến. Đã convert ở trên
 		// //convert map[string]interface{} to json string
 		// jsonStrData, err := json.Marshal(data)
-    // if err != nil {
+		// if err != nil {
 		// 	fmt.Println(err)
-    // }
+		// }
 
 		// // Convert json string to struct
 		// var user User
-    // if err := json.Unmarshal(jsonStrData, &user); err != nil {
+		// if err := json.Unmarshal(jsonStrData, &user); err != nil {
 		// 	fmt.Println(err)
-    // }
+		// }
 		users = append(users, user)
 	}
 
@@ -79,7 +80,7 @@ func CreateUser(user User) (User, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	iter, temp, err:= FI.Client.Collection("users").Add(ctx, user)
+	iter, temp, err := FI.Client.Collection("users").Add(ctx, user)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -100,7 +101,7 @@ func UpdateUser(userId string, user User) (User, error) {
 	return user, nil
 }
 
-func DeleteUser(userId string) (error) {
+func DeleteUser(userId string) error {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

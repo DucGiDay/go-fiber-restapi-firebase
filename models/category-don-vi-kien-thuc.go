@@ -15,9 +15,9 @@ import (
 )
 
 type DonViKienThuc struct {
-	Name            string `json:"name"`
-	Slug            string `json:"slug"`
-	Id_category_dkt string `json:"id_category_dkt"`
+	Name            string `json:"Name"`
+	Slug            string `json:"Slug"`
+	Id_category_dkt string `json:"Id_category_dkt"`
 }
 
 func ListDonViKienThucs() ([]DonViKienThuc, []string, error) {

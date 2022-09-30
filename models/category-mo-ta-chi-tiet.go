@@ -15,10 +15,10 @@ import (
 )
 
 type MoTaChiTiet struct {
-	Name             string `json:"name"`
-	Slug             string `json:"slug"`
-	Id_category_dvkt string `json:"id_category_dvkt"`
-	IsCheck          bool   `json:"isCheck"`
+	Name             string `json:"Name"`
+	Slug             string `json:"Slug"`
+	Id_category_dvkt string `json:"Id_category_dvkt"`
+	IsCheck          bool   `json:"IsCheck"`
 }
 
 func ListMoTaChiTiets() ([]MoTaChiTiet, []string, error) {
