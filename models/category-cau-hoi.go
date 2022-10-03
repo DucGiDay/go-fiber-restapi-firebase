@@ -24,7 +24,7 @@ type Cauhoi struct {
 	Id_cate_dvkt string `json: "Id_cate_dvkt"`
 	Id_cate_mtct string `json: "Id_cate_mtct"`
 	Slug    string             `json:"Slug"`
-	Level int `json: "level"`
+	Level string `json: "Level"`
 }
 
 func ListCauHoi()([]Cauhoi, []string, error){
