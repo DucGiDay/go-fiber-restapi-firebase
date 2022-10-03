@@ -38,21 +38,8 @@ func ListDonViKienThucs() ([]DonViKienThuc, []string, error) {
 			break
 		}
 		var donViKienThuc DonViKienThuc
-		data := doc.DataTo(&donViKienThuc) //convert thành struct và lưu vào user
+		data := doc.DataTo(&donViKienThuc)
 		log.Println(data, donViKienThuc)
-
-		// Phần convert này tạm thời ko dùng đến. Đã convert ở trên
-		// //convert map[string]interface{} to json string
-		// jsonStrData, err := json.Marshal(data)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// }
-
-		// // Convert json string to struct
-		// var user User
-		// if err := json.Unmarshal(jsonStrData, &user); err != nil {
-		// 	fmt.Println(err)
-		// }
 		donViKienThucs = append(donViKienThucs, donViKienThuc)
 		IDs = append(IDs, doc.Ref.ID)
 	}
@@ -95,14 +82,8 @@ func UpdateDonViKienThuc(id string, donViKienThuc DonViKienThuc) (DonViKienThuc,
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// Tạm thời update từng field vì chưa tìm ra nguyên nhân các key bị viết hoa lung tung
 	updateData, _ := helper.StructToMapString(donViKienThuc)
-	// temp, _ := helper.StructToMapString(donViKienThuc)
-	// updateData := map[string]interface{}{
-	// 	"Name":            temp["name"],
-	// 	"Id_category_dkt": temp["id_category_dkt"],
-	// 	"Slug":            temp["slug"],
-	// }
+
 	_, err := FI.Client.Collection("Category_Don_vi_kien_thuc").Doc(id).Set(ctx, updateData, firestore.MergeAll)
 	if err != nil {
 		log.Fatalln(err)
@@ -115,19 +96,37 @@ func DeleteDonViKienThuc(id string) error {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := FI.Client.Collection("Category_Don_vi_kien_thuc").Doc(id).Update(ctx, []firestore.Update{
-		{
-			Path:  "capital",
-			Value: firestore.Delete,
-		},
-	})
-	if err != nil {
-		log.Printf("An error has occurred: %s", err)
-	}
-	_, err = FI.Client.Collection("Category_Don_vi_kien_thuc").Doc(id).Delete(ctx)
+
+	_, err := FI.Client.Collection("Category_Don_vi_kien_thuc").Doc(id).Delete(ctx)
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	DeleteMoTaChiTietByIdDVKT(id)
+	return nil
+}
+
+func DeleteDonViKienThucByIdDKT(id string) error {
+	var FI config.FirebaseInstance = config.FI
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	iter := FI.Client.Collection("Category_Don_vi_kien_thuc").Where("Id_category_dkt", "==", id).Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		_, err = FI.Client.Collection("Category_Don_vi_kien_thuc").Doc(doc.Ref.ID).Delete(ctx)
+		if err != nil {
+			log.Fatalln(err)
+			return err
+		}
+		DeleteMoTaChiTietByIdDVKT(doc.Ref.ID)
+	}
+
 	return nil
 }

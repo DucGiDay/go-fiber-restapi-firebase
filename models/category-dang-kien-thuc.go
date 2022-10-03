@@ -38,21 +38,8 @@ func List() ([]DangKienThuc, []string, error) {
 			break
 		}
 		var dangKienThuc DangKienThuc
-		data := doc.DataTo(&dangKienThuc) //convert thành struct và lưu vào user
+		data := doc.DataTo(&dangKienThuc)
 		log.Println(data, dangKienThuc)
-
-		// Phần convert này tạm thời ko dùng đến. Đã convert ở trên
-		// //convert map[string]interface{} to json string
-		// jsonStrData, err := json.Marshal(data)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// }
-
-		// // Convert json string to struct
-		// var user User
-		// if err := json.Unmarshal(jsonStrData, &user); err != nil {
-		// 	fmt.Println(err)
-		// }
 
 		dangKienThucs = append(dangKienThucs, dangKienThuc)
 		IDs = append(IDs, doc.Ref.ID)
@@ -107,20 +94,11 @@ func Delete(id string) error {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := FI.Client.Collection("Category_Dang_Kien_Thuc").Doc(id).Update(ctx, []firestore.Update{
-		{
-			Path:  "capital",
-			Value: firestore.Delete,
-		},
-	})
-	if err != nil {
-		// Handle any errors in an appropriate way, such as returning them.
-		log.Printf("An error has occurred: %s", err)
-	}
-	_, err = FI.Client.Collection("Category_Dang_Kien_Thuc").Doc(id).Delete(ctx)
+	_, err := FI.Client.Collection("Category_Dang_Kien_Thuc").Doc(id).Delete(ctx)
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	DeleteDonViKienThucByIdDKT(id)
 	return nil
 }

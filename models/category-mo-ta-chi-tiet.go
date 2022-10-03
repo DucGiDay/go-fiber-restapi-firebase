@@ -116,19 +116,43 @@ func DeleteMoTaChiTiet(id string) error {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := FI.Client.Collection("Category_mo_ta_chi_tiet").Doc(id).Update(ctx, []firestore.Update{
-		{
-			Path:  "capital",
-			Value: firestore.Delete,
-		},
-	})
-	if err != nil {
-		log.Printf("An error has occurred: %s", err)
-	}
-	_, err = FI.Client.Collection("Category_mo_ta_chi_tiet").Doc(id).Delete(ctx)
+	// _, err := FI.Client.Collection("Category_mo_ta_chi_tiet").Doc(id).Update(ctx, []firestore.Update{
+	// 	{
+	// 		Path:  "capital",
+	// 		Value: firestore.Delete,
+	// 	},
+	// })
+	// if err != nil {
+	// 	log.Printf("An error has occurred: %s", err)
+	// }
+	_, err := FI.Client.Collection("Category_mo_ta_chi_tiet").Doc(id).Delete(ctx)
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
+	return nil
+}
+
+func DeleteMoTaChiTietByIdDVKT(id string) error {
+	var FI config.FirebaseInstance = config.FI
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	iter := FI.Client.Collection("Category_mo_ta_chi_tiet").Where("Id_category_dvkt", "==", id).Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		_, err = FI.Client.Collection("Category_mo_ta_chi_tiet").Doc(doc.Ref.ID).Delete(ctx)
+		if err != nil {
+			log.Fatalln(err)
+			return err
+		}
+	}
+
 	return nil
 }
