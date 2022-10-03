@@ -15,17 +15,21 @@ import (
 )
 
 type Cauhoi struct {
-	Id_cate_dkt  string `json: "Id_cate_dkt"`
+	Don_Kep int `json: "Don_Kep"`
+	// Date time.Time `json: "Date"`
+	Content_Question string `json: "Content_Question"`
+	Option_ans string `json: "Option_ans"`
+	Truy_ans string `json: "Truy_ans"`
+	Id_cate_dkt string `json: "Id_cate_dkt"`
 	Id_cate_dvkt string `json: "Id_cate_dvkt"`
 	Id_cate_mtct string `json: "Id_cate_mtct"`
-	Name         string `json:"Name"`
-	Slug         string `json:"Slug"`
-	Level        int    `json: "Level"`
+	Slug    string             `json:"Slug"`
+	Level int `json: "level"`
 }
 
-func ListCauHoi() ([]Cauhoi, []string, error) {
+func ListCauHoi()([]Cauhoi, []string, error){
 	var FI config.FirebaseInstance = config.FI
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(),10*time.Second)
 	defer cancel()
 	var cauHois []Cauhoi
 	var Ids []string
@@ -35,16 +39,17 @@ func ListCauHoi() ([]Cauhoi, []string, error) {
 		if err == iterator.Done {
 			break
 		}
-		if err != nil {
+		if err != nil{
 			fmt.Println(err)
 		}
 		var cauHoi Cauhoi
 		data := doc.DataTo(&cauHoi)
+		log.Println("data:",data)
 		log.Println(data, cauHoi)
 		cauHois = append(cauHois, cauHoi)
 		Ids = append(Ids, doc.Ref.ID)
 	}
-
+	
 	return cauHois, Ids, nil
 }
 
@@ -58,13 +63,12 @@ func ReadCauHoi(id string) (Cauhoi, error) {
 		log.Fatalln(err)
 	}
 	data := dsnap.DataTo(&cauHoi)
-
 	log.Println(data)
 	return cauHoi, nil
 
 }
 
-func CreateCauHoi(cauHoi Cauhoi) (Cauhoi, error) {
+func CreateCauHoi(cauHoi Cauhoi) (Cauhoi, error){
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -72,11 +76,11 @@ func CreateCauHoi(cauHoi Cauhoi) (Cauhoi, error) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println(iter, temp)
+	log.Println(iter,temp)
 	return cauHoi, nil
 }
 
-func UpdateCauHoi(id string, cauHoi Cauhoi) (Cauhoi, error) {
+func UpdateCauHoi(id string, cauHoi Cauhoi) (Cauhoi, error){
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -89,13 +93,13 @@ func UpdateCauHoi(id string, cauHoi Cauhoi) (Cauhoi, error) {
 	return cauHoi, nil
 }
 
-func DeleteCauHoi(id string) error {
+func DeleteCauHoi(id string) (error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err := FI.Client.Collection("cau_Hoi").Doc(id).Update(ctx, []firestore.Update{
+	_, err := FI.Client.Collection("cau_Hoi").Doc(id).Update(ctx,[]firestore.Update{
 		{
-			Path:  "capital",
+			Path: "capital",
 			Value: firestore.Delete,
 		},
 	})

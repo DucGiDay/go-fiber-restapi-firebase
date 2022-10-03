@@ -10,7 +10,18 @@ require (
 	google.golang.org/api v0.96.0
 )
 
-require github.com/stretchr/testify v1.7.1 // indirect
+require (
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/gofiber/fiber v1.14.6 // indirect
+	github.com/gofiber/utils v0.0.10 // indirect
+	github.com/gorilla/schema v1.1.0 // indirect
+	github.com/julienschmidt/httprouter v1.3.0 // indirect
+	github.com/mattn/go-colorable v0.1.7 // indirect
+	github.com/mattn/go-isatty v0.0.12 // indirect
+	github.com/stretchr/testify v1.7.1 // indirect
+	golang.org/x/crypto v0.0.0-20220924013350-4ba4fb4dd9e7 // indirect
+)
 
 require (
 	cloud.google.com/go v0.102.1 // indirect

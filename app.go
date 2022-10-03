@@ -1,25 +1,22 @@
 package main
 
 import (
-	// "os"
 
 	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
 	"github.com/DucGiDay/go-fiber-restapi-firebase/route"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	// "github.com/tillberg/autorestart"
 )
 
 func main() {
+	config.ConnectDatabase()
 	app := fiber.New()
-
 	app.Use(cors.New())
 	app.Use(logger.New())
 
-	config.ConnectDatabase()
-
 	setupRoutes(app)
+	// route.LoginRoute(app)
 	defer config.FI.Client.Close()
 	// autorestart.RestartOnChange()
 	app.Listen(":4000")
@@ -31,7 +28,6 @@ func setupRoutes(app *fiber.App) {
 	})
 
 	api := app.Group("/api")
-
 	route.CauHoiRoute(api.Group("/cau-hoi"))
 	route.UserRoute(api.Group("/users"))
 	route.DangKienThucRoute(api.Group("/dkt"))
