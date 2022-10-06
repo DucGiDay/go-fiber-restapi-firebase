@@ -19,7 +19,11 @@ type Cauhoi struct {
 	// Date time.Time `json: "Date"`
 	Content_Question string `json: "Content_Question"`
 	Option_ans string `json: "Option_ans"`
-	Truy_ans string `json: "Truy_ans"`
+	Ans_1 	string `json: "Ans_1"`
+	Ans_2 	string `json: "Ans_2"`
+	Ans_3 	string `json: "Ans_3"`
+	Ans_4 	string `json: "Ans_4"`
+	True_ans string `json: "Truy_ans"`
 	Id_cate_dkt string `json: "Id_cate_dkt"`
 	Id_cate_dvkt string `json: "Id_cate_dvkt"`
 	Id_cate_mtct string `json: "Id_cate_mtct"`
@@ -44,7 +48,6 @@ func ListCauHoi()([]Cauhoi, []string, error){
 		}
 		var cauHoi Cauhoi
 		data := doc.DataTo(&cauHoi)
-		log.Println("data:",data)
 		log.Println(data, cauHoi)
 		cauHois = append(cauHois, cauHoi)
 		Ids = append(Ids, doc.Ref.ID)
