@@ -8,26 +8,25 @@ import (
 
 	// "encoding/json"
 
+	helper "github.com/DucGiDay/go-fiber-restapi-firebase/helper"
 	"cloud.google.com/go/firestore"
 	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
-	"github.com/google/uuid"
 	"google.golang.org/api/iterator"
 )
 
 type User struct {
-	// ID       primitive.ObjectID `json:"id"`
-	ID       uuid.UUID `json:"Id"`
-	UserID   string    `json:"UserId"`
 	Username string    `json:"Username"`
 	Email    string    `json:"Email"`
 	Age      int       `json:"Age"`
+	Role	 string	   `ison:"Role"`
 }
 
-func GetAllUsers() ([]User, error) {
+func GetAllUsers() ([]User, []string, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var users []User
+	var UId []string
 
 	iter := FI.Client.Collection("users").Documents(ctx)
 	for {
@@ -41,24 +40,14 @@ func GetAllUsers() ([]User, error) {
 		}
 		var user User
 		data := doc.DataTo(&user) //convert thành struct và lưu vào user
-		log.Println(data, user)
-
-		// Phần convert này tạm thời ko dùng đến. Đã convert ở trên
-		// //convert map[string]interface{} to json string
-		// jsonStrData, err := json.Marshal(data)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// }
-
-		// // Convert json string to struct
-		// var user User
-		// if err := json.Unmarshal(jsonStrData, &user); err != nil {
-		// 	fmt.Println(err)
-		// }
-		users = append(users, user)
+		log.Println(data)
+		if user.Role == "User" {
+			users = append(users, user)
+			UId = append(UId, doc.Ref.ID)
+			log.Println("UId: ",UId)
+		}
 	}
-
-	return users, nil
+	return users, UId, nil
 }
 
 func GetUser(userId string) (User, error) {
@@ -70,9 +59,9 @@ func GetUser(userId string) (User, error) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	data := dsnap.DataTo(&user) ///convert from map[string]interface{} to struct type
+	data := dsnap.DataTo(&user)
+	 ///convert from map[string]interface{} to struct type
 	log.Println(data)
-
 	return user, nil
 }
 
@@ -94,7 +83,8 @@ func UpdateUser(userId string, user User) (User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	_, err := FI.Client.Collection("users").Doc(userId).Set(ctx, user, firestore.MergeAll)
+	updateData, _ := helper.StructToMapString(user)
+	_, err := FI.Client.Collection("users").Doc(userId).Set(ctx, updateData, firestore.MergeAll)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -109,6 +99,8 @@ func DeleteUser(userId string) error {
 	_, err := FI.Client.Collection("users").Doc(userId).Delete(ctx)
 	if err != nil {
 		log.Fatalln(err)
+		return err
 	}
+
 	return nil
 }

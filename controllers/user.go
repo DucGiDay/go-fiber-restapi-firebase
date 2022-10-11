@@ -1,35 +1,33 @@
 package controllers
 
 import (
-	// "fmt"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/DucGiDay/go-fiber-restapi-firebase/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"github.com/google/uuid"
+	"encoding/json"
 )
 
 func GetAllUsers(c *fiber.Ctx) error {
-	users, err := models.GetAllUsers()
+	users, UId, err := models.GetAllUsers()
 	if err != nil {
 		return err
 	}
-
-	return c.JSON(users)
+	responseDatas := []string{}
+	for i, cauhoi := range users {
+		UserByte, _ := json.Marshal(cauhoi)
+		UserString := string(UserByte)
+		fmt.Println(UserString)
+		responseDataString := UserString + " - id: " + UId[i]
+		responseDatas = append(responseDatas, responseDataString)
+	}
+	return c.JSON(responseDatas)
 }
 
 func GetUser(c *fiber.Ctx) error {
-	userId, err := primitive.ObjectIDFromHex(c.Params("userId"))
-
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": fiber.ErrBadRequest.Message,
-			"error":   err,
-		})
-	}
-	user, _ := models.GetUser(userId.String())
-
+	userId:= c.Params("userId")
+	user, err := models.GetUser(userId)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
@@ -53,8 +51,6 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	// user.ID = primitive.NewObjectID()
-	user.ID = uuid.New()
-	user.UserID = user.ID.String()
 	user, err := models.CreateUser(user)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

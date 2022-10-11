@@ -45,7 +45,6 @@ func ListCauHoi() ([]Cauhoi, []string, error) {
 		}
 		var cauHoi Cauhoi
 		data := doc.DataTo(&cauHoi)
-		log.Println("data:", data)
 		log.Println(data, cauHoi)
 		cauHois = append(cauHois, cauHoi)
 		Ids = append(Ids, doc.Ref.ID)
