@@ -24,6 +24,21 @@ func GetAllUsers(c *fiber.Ctx) error {
 	}
 	return c.JSON(responseDatas)
 }
+func GetAllAdmins(c *fiber.Ctx) error {
+	users, UId, err := models.GetAllAdmins()
+	if err != nil {
+		return err
+	}
+	responseDatas := []string{}
+	for i, cauhoi := range users {
+		UserByte, _ := json.Marshal(cauhoi)
+		UserString := string(UserByte)
+		fmt.Println(UserString)
+		responseDataString := UserString + " - id: " + UId[i]
+		responseDatas = append(responseDatas, responseDataString)
+	}
+	return c.JSON(responseDatas)
+}
 
 func GetUser(c *fiber.Ctx) error {
 	userId:= c.Params("userId")
@@ -65,19 +80,12 @@ func CreateUser(c *fiber.Ctx) error {
 
 func UpdateUser(c *fiber.Ctx) error {
 	var user models.User
-	userId, err := primitive.ObjectIDFromHex(c.Params("userId"))
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": fiber.ErrNotFound.Message,
-			"error":   err,
-		})
-	}
+	userId := c.Params("userId")
 	if err := c.BodyParser(&user); err != nil {
 		return err
 	}
 
-	user, err = models.UpdateUser(userId.String(), user)
+	user, err := models.UpdateUser(userId, user)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
