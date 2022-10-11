@@ -1,10 +1,12 @@
 package controllers
 
-import(
+import (
+	"encoding/json"
 	"fmt"
+	"time"
+
 	model "github.com/DucGiDay/go-fiber-restapi-firebase/models"
 	fiber "github.com/gofiber/fiber/v2"
-	"encoding/json"
 )
 
 func ListCauHoi(c *fiber.Ctx) error {
@@ -31,7 +33,7 @@ func ReadCauHoi(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
 			"message": fiber.ErrBadRequest.Message,
-			"error": err,
+			"error":   err,
 		})
 	}
 	return c.JSON(cauHoi)
@@ -39,22 +41,22 @@ func ReadCauHoi(c *fiber.Ctx) error {
 
 func CreateCauHoi(c *fiber.Ctx) error {
 	var cauHoi model.Cauhoi
-	if err := c.BodyParser(&cauHoi); err !=nil {
+	if err := c.BodyParser(&cauHoi); err != nil {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"succes": false,
+				"succes":  false,
 				"message": fiber.ErrBadRequest.Message,
-				"error": err,
+				"error":   err,
 			})
 		}
 	}
-
+	cauHoi.Date = time.Now()
 	cauHoi, err := model.CreateCauHoi(cauHoi)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"succes": false,
+			"succes":  false,
 			"message": fiber.ErrInternalServerError.Message,
-			"erroe": err,
+			"erroe":   err,
 		})
 	}
 	return c.JSON(cauHoi)
@@ -66,13 +68,13 @@ func UpdateCauHoi(c *fiber.Ctx) error {
 	if err := c.BodyParser(&cauHoi); err != nil {
 		return err
 	}
-	
+
 	cauHoi, err := model.UpdateCauHoi(id, cauHoi)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"message": fiber.ErrInternalServerError.Message,
-			"error": err,
+			"error":   err,
 		})
 	}
 	return c.JSON(cauHoi)
@@ -84,9 +86,9 @@ func DeleteCauHoi(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"succes": false,
+			"succes":  false,
 			"message": fiber.ErrInternalServerError.Message,
-			"error": err,
+			"error":   err,
 		})
 	}
 	return c.JSON([]byte(`{"message"}:"Delete Successfuly!"`))
