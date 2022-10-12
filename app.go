@@ -1,7 +1,6 @@
 package main
 
 import (
-
 	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
 	"github.com/DucGiDay/go-fiber-restapi-firebase/route"
 	"github.com/gofiber/fiber/v2"
@@ -29,6 +28,7 @@ func setupRoutes(app *fiber.App) {
 
 	api := app.Group("/api")
 	route.CauHoiRoute(api.Group("/cau-hoi"))
+	route.CauHoiKepRoute(api.Group("/cau-hoi-kep"))
 	route.UserRoute(api.Group("/users"))
 	route.DangKienThucRoute(api.Group("/dkt"))
 	route.DonViKienThucRoute(api.Group("/dvkt"))

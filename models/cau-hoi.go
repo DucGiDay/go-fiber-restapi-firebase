@@ -25,7 +25,7 @@ type Cauhoi struct {
 	Id_cate_mtct     string    `json:"Id_cate_mtct"`
 	Requirement      string    `json:"Requirement"`
 	Slug             string    `json:"Slug"`
-	Level            string    `json:"level"`
+	Level            string    `json:"Level"`
 }
 
 func ListCauHoi() ([]Cauhoi, []string, error) {
@@ -104,7 +104,7 @@ func DeleteCauHoi(id string) error {
 		},
 	})
 	if err != nil {
-		log.Println("An error has occurred: %s", err)
+		log.Println("An error has occurred: ", err)
 	}
 	_, err = FI.Client.Collection("cau_Hoi").Doc(id).Delete(ctx)
 	if err != nil {

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	// "fmt"
 
 	"github.com/DucGiDay/go-fiber-restapi-firebase/models"
 	"github.com/gofiber/fiber/v2"
@@ -26,17 +27,8 @@ func List(c *fiber.Ctx) error {
 }
 
 func Read(c *fiber.Ctx) error {
-	// id, err := primitive.ObjectIDFromHex(c.Params("id"))
 	id := c.Params("id")
-	// if err != nil {
-	// 	fmt.Println(3)
-	// 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-	// 		"success": false,
-	// 		"message": fiber.ErrBadRequest.Message,
-	// 		"error":   err,
-	// 	})
-	// }
-	dangKienThuc, err := models.Read(id)
+	dangKienThuc, err, _ := models.Read(id)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -46,6 +38,7 @@ func Read(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(dangKienThuc)
+	// return c.JSON(dangKienThucJsonStr)
 }
 
 func Create(c *fiber.Ctx) error {
@@ -73,14 +66,6 @@ func Create(c *fiber.Ctx) error {
 func Update(c *fiber.Ctx) error {
 	var dangKienThuc models.DangKienThuc
 	id := c.Params("id")
-	// id, err := primitive.ObjectIDFromHex(c.Params("id"))
-	// if err != nil {
-	// 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-	// 		"success": false,
-	// 		"message": fiber.ErrNotFound.Message,
-	// 		"error":   err,
-	// 	})
-	// }
 	if err := c.BodyParser(&dangKienThuc); err != nil {
 		return err
 	}

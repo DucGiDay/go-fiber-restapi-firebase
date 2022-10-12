@@ -13,3 +13,13 @@ func StructToMapString(in interface{}) (map[string]interface{}, error) {
 	return out, nil
 
 }
+
+func MapToJson(in map[string]interface{}) (string, error) {
+
+	out, err := json.Marshal(in)
+	if err != nil {
+		return "", err
+	}
+	return string(out), nil
+
+}

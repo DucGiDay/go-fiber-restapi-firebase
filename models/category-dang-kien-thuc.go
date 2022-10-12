@@ -8,8 +8,6 @@ import (
 
 	"github.com/DucGiDay/go-fiber-restapi-firebase/helper"
 
-	// "encoding/json"
-
 	"cloud.google.com/go/firestore"
 	"github.com/DucGiDay/go-fiber-restapi-firebase/config"
 	"google.golang.org/api/iterator"
@@ -48,20 +46,25 @@ func List() ([]DangKienThuc, []string, error) {
 	return dangKienThucs, IDs, nil
 }
 
-func Read(id string) (DangKienThuc, error) {
+func Read(id string) (DangKienThuc, error, string) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var dangKienThuc DangKienThuc
 	dsnap, err := FI.Client.Collection("Category_Dang_Kien_Thuc").Doc(id).Get(ctx)
+	// FI.Client.Close()
 	if err != nil {
 		log.Fatalln(err)
-		return dangKienThuc, err ///đang ko trả về đc lỗi nếu ko tìm thấy dữ liệu
+		return dangKienThuc, err, "" ///đang ko trả về đc lỗi nếu ko tìm thấy dữ liệu
 	}
 	data := dsnap.DataTo(&dangKienThuc) ///convert from map[string]interface{} to struct type
+	data2 := dsnap.Data()
+	data2["id"] = dsnap.Ref.ID
 	log.Println(data)
+	log.Println(data2)
+	dangKienThucJson, _ := helper.MapToJson(data2)
 
-	return dangKienThuc, nil
+	return dangKienThuc, nil, string(dangKienThucJson)
 }
 
 func Create(dangKienThuc DangKienThuc) (DangKienThuc, error) {
