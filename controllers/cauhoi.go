@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-	"fmt"
 	"time"
 
 	model "github.com/DucGiDay/go-fiber-restapi-firebase/models"
@@ -10,20 +8,23 @@ import (
 )
 
 func ListCauHoi(c *fiber.Ctx) error {
-	cauHois, Ids, err := model.ListCauHoi()
+	cauHois, err := model.ListCauHoi()
 	if err != nil {
 		return err
 	}
-	responseDatas := []string{}
-	for i, cauhoi := range cauHois {
-		cauhoiByte, _ := json.Marshal(cauhoi)
-		cauhoiString := string(cauhoiByte)
-		fmt.Println(cauhoiString)
-		responseDataString := cauhoiString + " - id: " + Ids[i]
-		responseDatas = append(responseDatas, responseDataString)
-	}
 
-	return c.JSON(responseDatas)
+	return c.JSON(cauHois)
+}
+
+func ListBothCauHoi(c *fiber.Ctx) error {
+	cauHoiKeps, err := model.ListCauHoiKep()
+	cauHoiDons, err := model.ListCauHoi()
+	if err != nil {
+		return err
+	}
+	cauHois := append(cauHoiDons, cauHoiKeps...)
+
+	return c.JSON(cauHois)
 }
 
 func ReadCauHoi(c *fiber.Ctx) error {

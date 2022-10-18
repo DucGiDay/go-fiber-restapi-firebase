@@ -16,3 +16,7 @@ func CauHoiRoute(route fiber.Router) {
 func CauHoiKepRoute(route fiber.Router) {
 	route.Get("/", controller.ListCauHoiKep)
 }
+
+func BothCauHoiRoute(route fiber.Router) {
+	route.Get("/", controller.ListBothCauHoi)
+}
