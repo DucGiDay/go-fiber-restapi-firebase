@@ -25,7 +25,7 @@ func GetAllUsers(c *fiber.Ctx) error {
 	return c.JSON(responseDatas)
 }
 func GetAllAdmins(c *fiber.Ctx) error {
-	users, UId, err := models.GetAllAuths()
+	users, UId, err := models.GetAllAdmins()
 	if err != nil {
 		return err
 	}
