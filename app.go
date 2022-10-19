@@ -30,6 +30,7 @@ func setupRoutes(app *fiber.App) {
 	route.CauHoiRoute(api.Group("/cau-hoi"))
 	route.CauHoiKepRoute(api.Group("/cau-hoi-kep"))
 	route.BothCauHoiRoute(api.Group("/both-cau-hoi"))
+	route.AdminRoute(api.Group("/admin"))
 	route.UserRoute(api.Group("/users"))
 	route.DangKienThucRoute(api.Group("/dkt"))
 	route.DonViKienThucRoute(api.Group("/dvkt"))
