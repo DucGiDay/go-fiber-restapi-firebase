@@ -18,12 +18,11 @@ type DangKienThuc struct {
 	Slug string `json:"Slug"`
 }
 
-func List() ([]DangKienThuc, []string, error) {
+func List() ([]string, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	var dangKienThucs []DangKienThuc
-	var IDs []string
+	var dangKienThucs []string
 
 	iter := FI.Client.Collection("Category_Dang_Kien_Thuc").Documents(ctx)
 	for {
@@ -35,15 +34,19 @@ func List() ([]DangKienThuc, []string, error) {
 			fmt.Println(err)
 			break
 		}
-		var dangKienThuc DangKienThuc
-		data := doc.DataTo(&dangKienThuc)
-		log.Println(data, dangKienThuc)
+		// var dangKienThuc DangKienThuc
+		// data := doc.DataTo(&dangKienThuc)
+		// log.Println(data, dangKienThuc)
 
-		dangKienThucs = append(dangKienThucs, dangKienThuc)
-		IDs = append(IDs, doc.Ref.ID)
+		// dangKienThucs = append(dangKienThucs, dangKienThuc)
+		// IDs = append(IDs, doc.Ref.ID)
+		data := doc.Data()
+		data["id"] = doc.Ref.ID
+		dangKienThuc, _ := helper.MapToJson(data)
+		dangKienThucs = append(dangKienThucs, string(dangKienThuc))
 	}
 
-	return dangKienThucs, IDs, nil
+	return dangKienThucs, nil
 }
 
 func Read(id string) (DangKienThuc, error, string) {

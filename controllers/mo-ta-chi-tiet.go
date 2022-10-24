@@ -4,27 +4,18 @@ import (
 
 	// "log"
 
-	"encoding/json"
-
 	"github.com/DucGiDay/go-fiber-restapi-firebase/models"
 	"github.com/gofiber/fiber/v2"
 	// "go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func ListMoTaChiTiets(c *fiber.Ctx) error {
-	moTaChiTiets, IDs, err := models.ListMoTaChiTiets()
+	moTaChiTiets, err := models.ListMoTaChiTiets()
 	if err != nil {
 		return err
 	}
-	responseDatas := []string{}
-	for i, moTaChiTiet := range moTaChiTiets {
-		moTaChiTietByte, _ := json.Marshal(moTaChiTiet)
-		moTaChiTietString := string(moTaChiTietByte)
-		responseDataString := moTaChiTietString + " - id: " + IDs[i]
-		responseDatas = append(responseDatas, responseDataString)
-	}
 
-	return c.JSON(responseDatas)
+	return c.JSON(moTaChiTiets)
 }
 
 func ReadMoTaChiTiet(c *fiber.Ctx) error {

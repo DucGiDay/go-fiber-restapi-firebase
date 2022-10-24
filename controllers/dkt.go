@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"encoding/json"
+
 	// "fmt"
 
 	"github.com/DucGiDay/go-fiber-restapi-firebase/models"
@@ -10,20 +10,11 @@ import (
 )
 
 func List(c *fiber.Ctx) error {
-	dangKienThucs, IDs, err := models.List()
+	dangKienThucs, err := models.List()
 	if err != nil {
 		return err
 	}
-	// respronseDatas := []map[string]interface{}{}
-	responseDatas := []string{}
-	for i, dangKienThuc := range dangKienThucs {
-		dangKienThucByte, _ := json.Marshal(dangKienThuc)
-		dangKienThucString := string(dangKienThucByte)
-		responseDataString := dangKienThucString + " - id: " + IDs[i]
-		responseDatas = append(responseDatas, responseDataString)
-	}
-
-	return c.JSON(responseDatas)
+	return c.JSON(dangKienThucs)
 }
 
 func Read(c *fiber.Ctx) error {
