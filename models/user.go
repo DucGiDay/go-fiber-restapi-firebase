@@ -17,8 +17,9 @@ import (
 type User struct {
 	Username string    `json:"Username"`
 	Email    string    `json:"Email"`
-	Age      int       `json:"Age"`
-	Role	 string	   `ison:"Role"`
+	Age      int    `json:"Age"`
+	Role	 string	   `json:"Role"`
+	UserID   string    `json:"UserID"`
 }
 
 func GetAllUsers() ([]User, []string, error) {
@@ -50,6 +51,35 @@ func GetAllUsers() ([]User, []string, error) {
 	return users, UId, nil
 }
 
+func GetAllAdmins() ([]User, []string, error) {
+	var FI config.FirebaseInstance = config.FI
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	var users []User
+	var UId []string
+
+	iter := FI.Client.Collection("users").Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+		var user User
+		data := doc.DataTo(&user) //convert thành struct và lưu vào user
+		log.Println(data)
+		if user.Role == "Admin" || user.Role == "Editer"{
+			users = append(users, user)
+			UId = append(UId, doc.Ref.ID)
+			log.Println("UId: ",UId)
+		}
+	}
+	return users, UId, nil
+}
+
 func GetUser(userId string) (User, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -60,7 +90,6 @@ func GetUser(userId string) (User, error) {
 		log.Fatalln(err)
 	}
 	data := dsnap.DataTo(&user)
-	 ///convert from map[string]interface{} to struct type
 	log.Println(data)
 	return user, nil
 }
