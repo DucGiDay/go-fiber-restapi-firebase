@@ -20,12 +20,11 @@ type DonViKienThuc struct {
 	Id_category_dkt string `json:"Id_category_dkt"`
 }
 
-func ListDonViKienThucs() ([]DonViKienThuc, []string, error) {
+func ListDonViKienThucs() ([]string, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	var donViKienThucs []DonViKienThuc
-	var IDs []string
+	var donViKienThucs []string
 
 	iter := FI.Client.Collection("Category_Don_vi_kien_thuc").Documents(ctx)
 	for {
@@ -37,14 +36,18 @@ func ListDonViKienThucs() ([]DonViKienThuc, []string, error) {
 			fmt.Println(err)
 			break
 		}
-		var donViKienThuc DonViKienThuc
-		data := doc.DataTo(&donViKienThuc)
-		log.Println(data, donViKienThuc)
-		donViKienThucs = append(donViKienThucs, donViKienThuc)
-		IDs = append(IDs, doc.Ref.ID)
+		// var donViKienThuc DonViKienThuc
+		// data := doc.DataTo(&donViKienThuc)
+		// log.Println(data, donViKienThuc)
+		// donViKienThucs = append(donViKienThucs, donViKienThuc)
+		// IDs = append(IDs, doc.Ref.ID)
+		data := doc.Data()
+		data["id"] = doc.Ref.ID
+		donViKienThuc, _ := helper.MapToJson(data)
+		donViKienThucs = append(donViKienThucs, string(donViKienThuc))
 	}
 
-	return donViKienThucs, IDs, nil
+	return donViKienThucs, nil
 }
 
 func ReadDonViKienThuc(id string) (DonViKienThuc, error) {

@@ -28,13 +28,12 @@ type Cauhoi struct {
 	Level            string    `json:"Level"`
 }
 
-func ListCauHoi() ([]Cauhoi, []string, error) {
+func ListCauHoi() ([]string, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	var cauHois []Cauhoi
-	var Ids []string
-	iter := FI.Client.Collection("cau_Hoi").Documents(ctx)
+	var cauHois []string
+	iter := FI.Client.Collection("cau_Hoi").Where("Don_Kep", "==", 0).Documents(ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -43,14 +42,18 @@ func ListCauHoi() ([]Cauhoi, []string, error) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		var cauHoi Cauhoi
-		data := doc.DataTo(&cauHoi)
-		log.Println(data, cauHoi)
-		cauHois = append(cauHois, cauHoi)
-		Ids = append(Ids, doc.Ref.ID)
+		// var cauHoi Cauhoi
+		// data := doc.DataTo(&cauHoi)
+		// log.Println(data, cauHoi)
+		// cauHois = append(cauHois, cauHoi)
+		data := doc.Data()
+		data["id"] = doc.Ref.ID
+		cauhoi, _ := helper.MapToJson(data)
+		log.Println(data, cauhoi)
+		cauHois = append(cauHois, string(cauhoi))
 	}
 
-	return cauHois, Ids, nil
+	return cauHois, nil
 }
 
 func ReadCauHoi(id string) (Cauhoi, error) {

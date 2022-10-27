@@ -21,12 +21,11 @@ type MoTaChiTiet struct {
 	IsCheck          bool   `json:"IsCheck"`
 }
 
-func ListMoTaChiTiets() ([]MoTaChiTiet, []string, error) {
+func ListMoTaChiTiets() ([]string, error) {
 	var FI config.FirebaseInstance = config.FI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	var moTaChiTiets []MoTaChiTiet
-	var IDs []string
+	var moTaChiTiets []string
 
 	iter := FI.Client.Collection("Category_mo_ta_chi_tiet").Documents(ctx)
 	for {
@@ -38,27 +37,18 @@ func ListMoTaChiTiets() ([]MoTaChiTiet, []string, error) {
 			fmt.Println(err)
 			break
 		}
-		var moTaChiTiet MoTaChiTiet
-		data := doc.DataTo(&moTaChiTiet) //convert thành struct và lưu vào user
-		log.Println(data, moTaChiTiet)
-
-		// Phần convert này tạm thời ko dùng đến. Đã convert ở trên
-		// //convert map[string]interface{} to json string
-		// jsonStrData, err := json.Marshal(data)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// }
-
-		// // Convert json string to struct
-		// var user User
-		// if err := json.Unmarshal(jsonStrData, &user); err != nil {
-		// 	fmt.Println(err)
-		// }
-		moTaChiTiets = append(moTaChiTiets, moTaChiTiet)
-		IDs = append(IDs, doc.Ref.ID)
+		// var moTaChiTiet MoTaChiTiet
+		// data := doc.DataTo(&moTaChiTiet) //convert thành struct và lưu vào user
+		// log.Println(data, moTaChiTiet)
+		// moTaChiTiets = append(moTaChiTiets, moTaChiTiet)
+		// IDs = append(IDs, doc.Ref.ID)
+		data := doc.Data()
+		data["id"] = doc.Ref.ID
+		moTaChiTiet, _ := helper.MapToJson(data)
+		moTaChiTiets = append(moTaChiTiets, string(moTaChiTiet))
 	}
 
-	return moTaChiTiets, IDs, nil
+	return moTaChiTiets, nil
 }
 
 func ReadMoTaChiTiet(id string) (MoTaChiTiet, error) {
