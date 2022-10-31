@@ -28,7 +28,6 @@ func ListCauHoiKep() ([]string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var cauHois []string
-	var Ids []string
 	iter := FI.Client.Collection("cau_Hoi").Where("Don_Kep", "==", 1).Documents(ctx)
 	// iter := FI.Client.Collection("cau_Hoi").Documents(ctx)
 	for {
@@ -46,8 +45,18 @@ func ListCauHoiKep() ([]string, error) {
 		cauhoi, _ := helper.MapToJson(data)
 		log.Println(data, cauhoi)
 		cauHois = append(cauHois, string(cauhoi))
-		Ids = append(Ids, doc.Ref.ID)
 	}
 
 	return cauHois, nil
+}
+func CreateCauHoiKep(cauHoi CauHoiKep) (CauHoiKep, error) {
+	var FI config.FirebaseInstance = config.FI
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	iter, temp, err := FI.Client.Collection("cau_Hoi").Add(ctx, cauHoi)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(iter, temp)
+	return cauHoi, nil
 }
