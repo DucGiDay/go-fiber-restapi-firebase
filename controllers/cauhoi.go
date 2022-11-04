@@ -52,6 +52,7 @@ func CreateCauHoi(c *fiber.Ctx) error {
 		}
 	}
 	cauHoi.Date = time.Now()
+	cauHoi.Don_Kep = 0
 	cauHoi, err := model.CreateCauHoi(cauHoi)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

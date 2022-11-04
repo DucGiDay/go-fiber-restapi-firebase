@@ -27,6 +27,7 @@ func CreateCauHoiKep(c *fiber.Ctx) error {
 		}
 	}
 	cauHoi.Date = time.Now()
+	cauHoi.Don_Kep = 1
 	cauHoi, err := model.CreateCauHoiKep(cauHoi)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
